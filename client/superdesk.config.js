@@ -25,13 +25,14 @@ module.exports = function() {
 
         view: {
             timeformat: 'HH:mm',
-            dateformat: 'DD.MM.YYYY',
+            dateformat: 'YYYY-MM-DD',
         },
 
-        shortTimeFormat: 'HH:mm, DD.MM.YYYY',
-        shortDateFormat: 'HH:mm, DD.MM.YYYY',
-        shortWeekFormat: 'HH:mm, DD.MM.YYYY',
+        shortTimeFormat: 'HH:mm, YYYY-MM-DD',
+        shortDateFormat: 'HH:mm, YYYY-MM-DD',
+        shortWeekFormat: 'HH:mm, YYYY-MM-DD',
         startingDay: '1',
+
         defaultTimezone: 'Europe/Prague',
 
         editor3: { browserSpellCheck: true, },
@@ -79,6 +80,7 @@ module.exports = function() {
 
         list: {
             priority: [
+                'priority',
                 'urgency'
             ],
             firstLine: [
@@ -89,6 +91,7 @@ module.exports = function() {
                 'versioncreated'
             ],
             secondLine: [
+                'language',
                 'state',
                 'update',
                 'scheduledDateTime',
