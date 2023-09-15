@@ -30,6 +30,7 @@ LOG_CONFIG_FILE = env("LOG_CONFIG_FILE", "logging_config.yml")
 
 # Highcharts Export Server - default settings
 ANALYTICS_ENABLE_SCHEDULED_REPORTS = strtobool(env("ANALYTICS_ENABLE_SCHEDULED_REPORTS", "true"))
+ANALYTICS_ENABLE_ARCHIVE_STATS = strtobool(env("ANALYTICS_ENABLE_ARCHIVE_STATS", "true"))
 
 MACROS_MODULE = env("MACROS_MODULE", "macros")
 
