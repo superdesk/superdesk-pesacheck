@@ -5,10 +5,10 @@ on: [push, pull_request]
 jobs:
 
   server:
-    uses: petrjasek/superdesk/.github/workflows/server.yml@chore-reusable-github-workflows
+    uses: superdesk/superdesk/.github/workflows/server.yml@develop
 
   client:
-    uses: petrjasek/superdesk/.github/workflows/client.yml@chore-reusable-github-workflows
+    uses: superdesk/superdesk/.github/workflows/client.yml@develop
 
   docker:
-    uses: petrjasek/superdesk/.github/workflows/docker.yml@chore-reusable-github-workflows
+    uses: superdesk/superdesk/.github/workflows/docker.yml@develop
