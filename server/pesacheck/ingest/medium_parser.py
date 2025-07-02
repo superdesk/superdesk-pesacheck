@@ -116,6 +116,18 @@ class MediumParser(FileFeedParser):
                 "source": "Medium",
             }
 
+            # try to extract a slugline from the title
+            title_text = self._get_text(title)
+            if ":" in title_text:
+                item["slugline"] = title_text.split(":")[0].strip()
+
+            # keep original article url
+            canonical = root.find(".//a[@class='p-canonical']")
+            if canonical is not None and canonical.get("href"):
+                if "extra" not in item:
+                    item["extra"] = {}
+                item["extra"]["original_article_url"] = canonical.get("href")
+
             return item
         except Exception as ex:
             raise ParserError.parseFileError(file_path, ex)

@@ -33,6 +33,12 @@ class MediumParserTestCase(BaseTestCase):
         self.assertEqual(item["byline"], "PesaCheck")
         self.assertEqual(item["source"], "Medium")
 
+        self.assertEqual(item["slugline"], "HOAX")
+        self.assertEqual(
+            item["extra"]["original_article_url"],
+            "https://medium.com/@PesaCheck/hoax-this-unaids-job-advert-in-uganda-is-fake-f8d269a3d85d",
+        )
+
     def test_parse_invalid_html(self):
         with self.assertRaises(ParserError) as cm:
             self.parser.parse("invalid_file_path")
