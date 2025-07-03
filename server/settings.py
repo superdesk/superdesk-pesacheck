@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "apps.languages",
     "planning",
     "analytics",
+    "pesacheck.ingest",
 ]
 
 PLANNING_EVENT_TEMPLATES_ENABLED = True
