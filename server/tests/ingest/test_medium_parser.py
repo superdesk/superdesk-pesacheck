@@ -1,11 +1,10 @@
 import os
+from superdesk.tests import AppTestCase
 from superdesk.errors import ParserError
 from pesacheck.ingest.medium_parser import MediumParser
 
-from .. import BaseTestCase
 
-
-class MediumParserTestCase(BaseTestCase):
+class MediumParserTestCase(AppTestCase):
     def setUp(self):
         super().setUp()
 
@@ -53,3 +52,25 @@ class MediumParserTestCase(BaseTestCase):
             self.assertEqual(cm.exception.code, 1002)
         finally:
             os.remove("test_file.html")
+
+    def test_parse_images(self):
+        """Test that images are parsed and added to associations."""
+        item = self.parser.parse(self.file_path)
+
+        self.assertIn("associations", item)
+        self.assertIn("featuremedia", item["associations"])
+
+        featuremedia = item["associations"]["featuremedia"]
+        self.assertEqual(featuremedia["type"], "picture")
+
+        embedded_count = sum(1 for key in item["associations"].keys() if key.startswith("embedded"))
+        self.assertGreater(embedded_count, 0)
+
+        # verify the image GUID is generated
+        self.assertTrue(featuremedia["guid"].endswith("-image"))
+
+        # verify required fields are present
+        self.assertIn("headline", featuremedia)
+        self.assertIn("alt_text", featuremedia)
+        self.assertIn("description_text", featuremedia)
+        self.assertIn("ingest_provider", featuremedia)
