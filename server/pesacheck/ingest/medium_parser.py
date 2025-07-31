@@ -95,7 +95,7 @@ class MediumParser(FileFeedParser):
             "headline": item["headline"],
             "ingest_provider": self.NAME,
             "alt_text": alt_text,
-            "description_text": description_text
+            "description_text": description_text,
         }
         update_renditions(association, url, None)
 
