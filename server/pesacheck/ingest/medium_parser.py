@@ -93,7 +93,6 @@ class MediumParser(FileFeedParser):
             ITEM_TYPE: CONTENT_TYPE.PICTURE,
             GUID_FIELD: self._generate_image_guid(url),
             "headline": item["headline"],
-            "ingest_provider": self.NAME,
             "alt_text": alt_text,
             "description_text": description_text,
         }
