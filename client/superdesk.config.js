@@ -59,7 +59,22 @@ module.exports = function() {
 
         search_cvs: [
             {id: 'topics', name:'Topics', field: 'subject', list: 'topics'},
-            {id: 'language', name:'Language', field: 'language', list: 'languages'}
+            {id: 'language', name:'Language', field: 'language', list: 'languages'},
+            {id: 'project', name:'Project', field: 'project', list: 'project'}
+            {id: 'claimformat', name:'Claim format', field: 'claim_format', list: 'claimformat'},
+            {id: 'claimtopic', name:'Claim topic', field: 'claim_topic', list: 'claimtopic'},
+            {id: 'claimtype', name:'Claim type', field: 'claim_type', list: 'claimtype'},
+            {id: 'countrymention1', name:'Primary country', field: 'primary_country', list: 'countrymention1'},
+            {id: 'countrymention2nd', name:'2nd country mention', field: 'country_mention_2', list: 'countrymention2nd'},
+            {id: 'countrymention3rd', name:'3rd country mention', field: 'country_mention_3', list: 'countrymention3rd'},
+            {id: 'countrymention4th', name:'4th country mention', field: 'country_mention_4', list: 'countrymention4th'},
+            {id: 'countrymention5th', name:'5th country mention', field: 'country_mention_5', list: 'countrymention5th'},
+            {id: 'countriesmention', name:'Countries mentioned', field: 'countries_mentioned', list: 'countriesmention'},
+            {id: 'debunklanguage', name:'Debunk language', field: 'debunk_language', list: 'debunklanguage'},
+            {id: 'debunkrating', name:'Debunk rating', field: 'debunk_rating', list: 'debunkrating'},
+            {id: 'geccategory', name:'GEC category', field: 'gec_category', list: 'geccategory'},
+            {id: 'harmtype', name:'Harm type', field: 'harm_type', list: 'harmtype'},
+            {id: 'primaryplatform', name:'Primary platform', field: 'primary_platform', list: 'primaryplatform'},
         ],
 
         features: {
