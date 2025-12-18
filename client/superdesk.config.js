@@ -60,7 +60,7 @@ module.exports = function() {
         search_cvs: [
             {id: 'topics', name:'Topics', field: 'subject', list: 'topics'},
             {id: 'language', name:'Language', field: 'language', list: 'languages'},
-            {id: 'project', name:'Project', field: 'project', list: 'project'}
+            {id: 'project', name:'Project', field: 'project', list: 'project'},
             {id: 'claimformat', name:'Claim format', field: 'claim_format', list: 'claimformat'},
             {id: 'claimtopic', name:'Claim topic', field: 'claim_topic', list: 'claimtopic'},
             {id: 'claimtype', name:'Claim type', field: 'claim_type', list: 'claimtype'},
