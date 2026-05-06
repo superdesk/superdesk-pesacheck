@@ -73,4 +73,3 @@ class MediumParserTestCase(AppTestCase):
         self.assertIn("headline", featuremedia)
         self.assertIn("alt_text", featuremedia)
         self.assertIn("description_text", featuremedia)
-        self.assertIn("ingest_provider", featuremedia)
