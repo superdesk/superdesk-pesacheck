@@ -3,10 +3,11 @@ import hashlib
 import logging
 import random
 import time
+import unicodedata
 from copy import deepcopy
 from urllib.parse import urlparse
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from superdesk.errors import ParserError
 from superdesk.etree import parse_html
@@ -93,6 +94,29 @@ class GhostParser(FileFeedParser):
     def _mark_fetch_done(self):
         self._last_image_fetch_ts = time.monotonic()
 
+    def _guess_language(self, text):
+        """Guess language from text: returns 'am', 'fr', or 'en'.
+
+        Ethiopic script detection is used first (langdetect has no Amharic model).
+        langdetect is then used to distinguish English from French; anything
+        unrecognised falls back to English.
+        """
+        if not text:
+            return None
+        # Detect Amharic by Ethiopic Unicode block (U+1200–U+137F, etc.)
+        for ch in text:
+            if "ETHIOPIC" in unicodedata.name(ch, ""):
+                return "am"
+        try:
+            from langdetect import detect, LangDetectException
+
+            detected = detect(text)
+            if detected in ("en", "fr"):
+                return detected
+        except Exception:
+            pass
+        return "en"
+
     def can_parse(self, file_path):
         try:
             with open(file_path, "rb") as f:
@@ -164,6 +188,7 @@ class GhostParser(FileFeedParser):
         raise last_error
 
     def _add_image(self, item, url, alt_text="", description_text="", is_featured=False):
+        """Fetch image, attach it as an association, and return the local storage href (or None)."""
         associations = item.setdefault("associations", {})
         association = {
             ITEM_TYPE: CONTENT_TYPE.PICTURE,
@@ -183,6 +208,8 @@ class GhostParser(FileFeedParser):
 
         associations[key] = association
 
+        return association.get("renditions", {}).get("original", {}).get("href")
+
     def _parse_feature_image(self, item, post):
         url = post.get("feature_image")
         if url:
@@ -200,6 +227,7 @@ class GhostParser(FileFeedParser):
             logger.warning("Failed to parse HTML for inline images: %s", e)
             return
 
+        url_rewrites = {}
         for img in root.xpath(".//img"):
             try:
                 src = img.get("src")
@@ -219,9 +247,17 @@ class GhostParser(FileFeedParser):
                             else (figcaption.text or "")
                         ).strip()
 
-                self._add_image(item, src, alt_text, description_text)
+                local_href = self._add_image(item, src, alt_text, description_text)
+                if local_href:
+                    url_rewrites[src] = local_href
             except Exception as e:
                 logger.warning("Failed to parse inline image %s: %s", img.get("src", "unknown"), e)
+
+        if url_rewrites:
+            body = item.get("body_html") or ""
+            for external_url, local_href in url_rewrites.items():
+                body = body.replace(external_url, local_href)
+            item["body_html"] = body
 
     # ------------------------------------------------------------------
     # Date parsing
@@ -232,7 +268,7 @@ class GhostParser(FileFeedParser):
             return utcnow()
         for fmt in ("%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"):
             try:
-                return datetime.strptime(value, fmt)
+                return datetime.strptime(value, fmt).replace(tzinfo=timezone.utc)
             except (ValueError, TypeError):
                 continue
         raise ValueError("Unrecognised date format: %r" % value)
@@ -273,6 +309,10 @@ class GhostParser(FileFeedParser):
         locale = post.get("locale")
         if locale:
             item["language"] = locale
+        else:
+            guessed = self._guess_language(html or post.get("title") or "")
+            if guessed:
+                item["language"] = guessed
 
         self._parse_feature_image(item, post)
         self._parse_inline_images(item, html)
@@ -283,8 +323,8 @@ class GhostParser(FileFeedParser):
     # Main entry point
     # ------------------------------------------------------------------
 
-    def parse(self, file_path, provider=None):
-        """Parse a Ghost JSON export file and return a list of Superdesk items."""
+    def iter_items(self, file_path, provider=None):
+        """Parse a Ghost JSON export file and yield Superdesk items one at a time."""
         self._image_assoc_cache = {}
         self._last_image_fetch_ts = 0.0
         try:
@@ -331,16 +371,17 @@ class GhostParser(FileFeedParser):
                     }
                 )
 
-        items = []
         for post in posts:
             if post.get("status") != "published" or post.get("type") != "post":
                 continue
             try:
-                items.append(self._parse_post(post, authors_by_post, tags_by_post))
+                yield self._parse_post(post, authors_by_post, tags_by_post)
             except Exception as ex:
                 logger.warning("Failed to parse Ghost post %s: %s", post.get("id"), ex)
 
-        return items
+    def parse(self, file_path, provider=None):
+        """Parse a Ghost JSON export file and return a list of Superdesk items."""
+        return list(self.iter_items(file_path, provider))
 
 
 register_feed_parser(GhostParser.NAME, GhostParser())

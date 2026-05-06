@@ -1,6 +1,7 @@
 honcho
 gunicorn
 pyparsing<3.3
+langdetect
 
 git+https://github.com/superdesk/superdesk-core.git@v2.10.0#egg=superdesk-core
 git+https://github.com/superdesk/superdesk-planning.git@v2.10.0#egg=superdesk-planning

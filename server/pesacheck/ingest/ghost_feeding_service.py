@@ -1,5 +1,6 @@
 import os
 import logging
+from itertools import islice
 
 from superdesk.errors import ParserError
 from superdesk.io.feeding_services.file_service import FileFeedingService
@@ -57,11 +58,13 @@ class GhostFeedingService(FileFeedingService):
                     logger.info("Skipping non-Ghost file %s", filename)
                     continue
 
-                all_items = parser.parse(file_path, provider)
+                items_gen = parser.iter_items(file_path, provider)
 
                 failed = False
-                for i in range(0, len(all_items), BATCH_SIZE):
-                    batch = all_items[i : i + BATCH_SIZE]
+                while True:
+                    batch = list(islice(items_gen, BATCH_SIZE))
+                    if not batch:
+                        break
                     failed = yield batch
                     if failed:
                         break

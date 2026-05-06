@@ -67,8 +67,8 @@ class GhostParserTestCase(AppTestCase):
     def test_parse_dates(self, _mock):
         items = self.parser.parse(FIXTURE_PATH)
         post1 = next(i for i in items if i["guid"] == "aaaaaaaa-0001-0001-0001-aaaaaaaaaaaa")
-        self.assertEqual(post1["firstcreated"].isoformat(), "2025-11-01T10:00:00")
-        self.assertEqual(post1["versioncreated"].isoformat(), "2025-11-01T11:00:00")
+        self.assertEqual(post1["firstcreated"].isoformat(), "2025-11-01T10:00:00+00:00")
+        self.assertEqual(post1["versioncreated"].isoformat(), "2025-11-01T11:00:00+00:00")
 
     @patch("pesacheck.ingest.ghost_parser.update_renditions", side_effect=_mock_update_renditions)
     def test_parse_source(self, _mock):
