@@ -83,10 +83,10 @@ class GhostParserTestCase(AppTestCase):
         self.assertEqual(post1["language"], "fr")
 
     @patch("pesacheck.ingest.ghost_parser.update_renditions", side_effect=_mock_update_renditions)
-    def test_parse_null_locale_not_set(self, _mock):
+    def test_parse_null_locale_guesses_language(self, _mock):
         items = self.parser.parse(FIXTURE_PATH)
         post2 = next(i for i in items if i["guid"] == "bbbbbbbb-0002-0002-0002-bbbbbbbbbbbb")
-        self.assertNotIn("language", post2)
+        self.assertIn("language", post2)
 
     # ------------------------------------------------------------------
     # parse — authors → byline
