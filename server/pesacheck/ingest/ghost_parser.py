@@ -108,7 +108,7 @@ class GhostParser(FileFeedParser):
             if "ETHIOPIC" in unicodedata.name(ch, ""):
                 return "am"
         try:
-            from langdetect import detect, LangDetectException
+            from langdetect import detect
 
             detected = detect(text)
             if detected in ("en", "fr"):
@@ -199,9 +199,7 @@ class GhostParser(FileFeedParser):
         }
         self._fetch_renditions_with_retry(association, url)
 
-        if is_featured and "featuremedia" not in associations:
-            key = "featuremedia"
-        elif "featuremedia" not in associations:
+        if "featuremedia" not in associations:
             key = "featuremedia"
         else:
             key = "embedded" + str(len(associations) - 1)
