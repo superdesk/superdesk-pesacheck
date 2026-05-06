@@ -235,7 +235,7 @@ class GhostParser(FileFeedParser):
                 return datetime.strptime(value, fmt)
             except (ValueError, TypeError):
                 continue
-        return utcnow()
+        raise ValueError("Unrecognised date format: %r" % value)
 
     # ------------------------------------------------------------------
     # Single post → Superdesk item
@@ -285,6 +285,8 @@ class GhostParser(FileFeedParser):
 
     def parse(self, file_path, provider=None):
         """Parse a Ghost JSON export file and return a list of Superdesk items."""
+        self._image_assoc_cache = {}
+        self._last_image_fetch_ts = 0.0
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
